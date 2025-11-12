@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="en" xmlns="">
+<head>
+    <meta charset="UTF-8">
+    <title>웹 채팅</title>
+    <style>
+        .status
+        {
+            font-size:  12px;
+            color:  #666;
+        }
+    </style>
+</head>
+<body>
+<div id="status"> 웹소켓 연결 중</div>
+<script>
+    let ws = null;
+const statusedl =  document.getElementById('status');
+
+function ConnectWebSocket()
+{
+    return new Promise((resolve, reject)=>
+    {
+        ws = new  WebSocket("ws://localhost:8080/ws/chat");
+        const to  = setTimeout(()=>{
+            ws.close?.();
+            reject(new Error("연결타임 아웃"))
+        }, 8000);
+       ws.onopen = () =>{
+           clearTimeout(to);
+           resolve(ws);
+       };
+       ws.onerror =(e) =>{
+           clearTimeout(to);
+           reject(e);
+       }
+    })
+}
+
+
+window.addEventListener("DOMContentLoaded",()=>{
+    try {
+
+        const so = ConnectWebSocket();
+        statusedl.textContent = "서버연결 성공"
+        so.onmessage = (evt) => {
+            console.log("서버 메세지:", evt.data);
+        }
+    }
+    catch (e)
+    {
+        statusedl.textContent = "서버연결실패"
+    }
+
+} )
+
+
+</script>
+</body>
+</html>
