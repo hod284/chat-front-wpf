@@ -1,0 +1,10 @@
+version: "3.8"
+
+services:
+  chat-backend:
+    image: hod284/chatgit-actions:latest    # 또는 build: . 쓰는 중이면 그대로 두고
+    restart:  unless-stopped
+    ports:
+      - "8080:8080"
+    environment:
+      - TZ=Asia/Seoul
