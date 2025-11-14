@@ -43,9 +43,6 @@ window.addEventListener("DOMContentLoaded",()=>{
 
         const so = ConnectWebSocket();
         statusedl.textContent = "서버연결 성공"
-        so.onmessage = (evt) => {
-            console.log("서버 메세지:", evt.data);
-        }
     }
     catch (e)
     {
