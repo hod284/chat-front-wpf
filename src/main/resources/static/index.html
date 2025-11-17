@@ -4,6 +4,10 @@
     <meta charset="UTF-8">
     <title>웹 채팅</title>
     <style>
+        .disabledBox {
+            pointer-events: none;
+            opacity: 0.5;
+        }
         .status
         {
             font-size:  10px;
@@ -39,25 +43,26 @@
 <label> 닉네임
     <input id ="nameinput" type = "text" value="web -user">
 </label>
-<button id="loadRoomsBtn"> 방 목록 새로고침</button>>
+<button id="loadRoomsBtn"> 방 목록 새로고침</button>
 <div>
-    <strong> 방목록</strong>>
+    <strong> 방목록</strong>
     <div id="Roomlist">(아직 아무 방도 없습니다)</div>
+</div>`
+<div>
+<strong> 방만들기</strong>
 </div>
-<h2>방만들기</h2>>
-<div class ="row" style="margin-top:12px" >
+<div>
     <label>새방이름<input id ="newRoomInput" type="text" placeholder="예 :room-1"/></label>
-    <button id = "createroombtn"> 방생성</button>>
+    <button id = "createroombtn"> 방생성</button>
 </div>
 <div>
     <strong>현재방 : </strong><span id ="currentroomname"> 없음 </span>
-    <button id = "LeaveRoombtn"> 방떠나기</button>>
-</div>>
+    <button id = "LeaveRoombtn"> 방떠나기</button>
+</div>
 <script>
     let ws = null;
 const statusedl =  document.getElementById('status');
 const apibase = "http://localhost:8080";
-const roomlistdiv = document.getElementById("Roomlist");
 function ConnectWebSocket()
 {
     document.getElementById("LeaveRoombtn").disabled =true;
@@ -96,14 +101,14 @@ function ConnectWebSocket()
         catch (e)
         {
             console.error(e);
-            roomlistdiv.textContent ="방목록을 가져오는 도중 오류 발생"
+            document.getElementById("Roomlist").textContent ="방목록을 가져오는 도중 오류 발생"
         }
     }
     function  renderroom(rooms)
     {
-        roomlistdiv.innerHTML ="";// 초기화
+        document.getElementById("Roomlist").innerHTML ="";// 초기화
         if(!rooms||rooms.length ==0)
-            roomlistdiv.textContent ="현재 현존하는 방이 없습니다";
+            document.getElementById("Roomlist").textContent ="현재 현존하는 방이 없습니다";
         rooms.forEach(
             roommid=>{
                 const btn =document.createElement("button");
@@ -111,7 +116,7 @@ function ConnectWebSocket()
                 btn.addEventListener("click",()=>{
                     joinroom(roommid);
                 });
-                roomlistdiv.appendChild(btn);
+                document.getElementById("Roomlist").appendChild(btn);
             });
     }
     document.getElementById("loadRoomsBtn").addEventListener("click",loadroom);
@@ -125,22 +130,20 @@ function ConnectWebSocket()
         {
              loadroom(); // 목록 새로고침
             const roomId = document.getElementById("newRoomInput").value.trim();
-            document.getElementById("currentroomname").textContent =roomId;
-            const buttons = document.querySelectorAll("#Roomlist button");
-            buttons.forEach(btn => btn.disabled = true);
             document.getElementById("createroombtn").disabled =true;
             document.getElementById("loadRoomsBtn").disabled =true;
             document.getElementById("LeaveRoombtn").disabled =false;
+            document.getElementById("currentroomname").textContent =roomId;
+            document.getElementById("Roomlist").classList.add("disabledBox");
         }
         else if (msg.type =="leaveAck")
         {
             loadroom(); // 목록 새로고침
             document.getElementById("currentroomname").textContent ="현재들어간 방은 없습니다";
-            const buttons = document.querySelectorAll("#Roomlist button");
-            buttons.forEach(btn => btn.disabled = false);
             document.getElementById("createroombtn").disabled =false;
             document.getElementById("loadRoomsBtn").disabled =false;
             document.getElementById("LeaveRoombtn").disabled =true;
+            document.getElementById("Roomlist").classList.remove("disabledBox");
         }
     }
     async function  createroom ()
