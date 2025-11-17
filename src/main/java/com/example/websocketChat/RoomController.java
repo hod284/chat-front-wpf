@@ -19,12 +19,10 @@ public class RoomController {
     {
         RoomM = roomManager;
     }
-    @GetMapping("/{RoomNames}")
+    @GetMapping
     public ResponseEntity<Set<String>> GetRoomsInfoList()
     {
         Set<String> RoomsInfo = RoomM.getRoominfo();
         return  ResponseEntity.ok(RoomsInfo);
     }
-
-
 }

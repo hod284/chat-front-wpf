@@ -6,19 +6,61 @@
     <style>
         .status
         {
-            font-size:  12px;
+            font-size:  10px;
             color:  #666;
+        }
+        #Roomlist {
+            border: 1px solid #ccc;
+            min-height: 40px;
+            padding: 8px;
+            margin-bottom: 10px;
+            background: #f8f8f8;
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+        }
+        #Roomlist button {
+            display: block;
+            width: 80%;
+            padding: 10px 14px;
+            font-size: 16px;
+            text-align: left;
+            border-radius: 6px;
+            border: 1px solid #aaa;
+            cursor: pointer;
+        }
+        #Roomlist button:hover {
+            background: #e6e6e6;
         }
     </style>
 </head>
 <body>
 <div id="status"> 웹소켓 연결 중</div>
+<label> 닉네임
+    <input id ="nameinput" type = "text" value="web -user">
+</label>
+<button id="loadRoomsBtn"> 방 목록 새로고침</button>>
+<div>
+    <strong> 방목록</strong>>
+    <div id="Roomlist">(아직 아무 방도 없습니다)</div>
+</div>
+<h2>방만들기</h2>>
+<div class ="row" style="margin-top:12px" >
+    <label>새방이름<input id ="newRoomInput" type="text" placeholder="예 :room-1"/></label>
+    <button id = "createroombtn"> 방생성</button>>
+</div>
+<div>
+    <strong>현재방 : </strong><span id ="currentroomname"> 없음 </span>
+    <button id = "LeaveRoombtn"> 방떠나기</button>>
+</div>>
 <script>
     let ws = null;
 const statusedl =  document.getElementById('status');
-
+const apibase = "http://localhost:8080";
+const roomlistdiv = document.getElementById("Roomlist");
 function ConnectWebSocket()
 {
+    document.getElementById("LeaveRoombtn").disabled =true;
     return new Promise((resolve, reject)=>
     {
         ws = new  WebSocket("ws://localhost:8080/ws/chat");
@@ -34,22 +76,120 @@ function ConnectWebSocket()
            clearTimeout(to);
            reject(e);
        }
+        ws.onmessage =(event)=>{
+            const msg = JSON.parse(event.data);
+            handlemessage(msg);
+        }
     })
 }
+    async function loadroom()
+    {
+        try
+        {
+            // 자바 스크립트 restfulapi 호출
+            const res = await  fetch(apibase +"/api/Rooms");
+            if(!res.ok)
+                console.log("방 목록 호출 실패");
+            const rooms =await  res.json();
+            renderroom(rooms);
+        }
+        catch (e)
+        {
+            console.error(e);
+            roomlistdiv.textContent ="방목록을 가져오는 도중 오류 발생"
+        }
+    }
+    function  renderroom(rooms)
+    {
+        roomlistdiv.innerHTML ="";// 초기화
+        if(!rooms||rooms.length ==0)
+            roomlistdiv.textContent ="현재 현존하는 방이 없습니다";
+        rooms.forEach(
+            roommid=>{
+                const btn =document.createElement("button");
+                btn.textContent= roommid;
+                btn.addEventListener("click",()=>{
+                    joinroom(roommid);
+                });
+                roomlistdiv.appendChild(btn);
+            });
+    }
+    document.getElementById("loadRoomsBtn").addEventListener("click",loadroom);
+    function handlemessage(msg)
+    {
+        console.log("수신 : "+ msg);
+        if (msg.type =="chat") {
 
-
-window.addEventListener("DOMContentLoaded",()=>{
+        }
+        else if (msg.type =="CreateAck")
+        {
+             loadroom(); // 목록 새로고침
+            const roomId = document.getElementById("newRoomInput").value.trim();
+            document.getElementById("currentroomname").textContent =roomId;
+            const buttons = document.querySelectorAll("#Roomlist button");
+            buttons.forEach(btn => btn.disabled = true);
+            document.getElementById("createroombtn").disabled =true;
+            document.getElementById("loadRoomsBtn").disabled =true;
+            document.getElementById("LeaveRoombtn").disabled =false;
+        }
+        else if (msg.type =="leaveAck")
+        {
+            loadroom(); // 목록 새로고침
+            document.getElementById("currentroomname").textContent ="현재들어간 방은 없습니다";
+            const buttons = document.querySelectorAll("#Roomlist button");
+            buttons.forEach(btn => btn.disabled = false);
+            document.getElementById("createroombtn").disabled =false;
+            document.getElementById("loadRoomsBtn").disabled =false;
+            document.getElementById("LeaveRoombtn").disabled =true;
+        }
+    }
+    async function  createroom ()
+    {
+        const roomId = document.getElementById("newRoomInput").value.trim();
+        const sender = document.getElementById("nameinput").value.trim();
+        if (!roomId)
+             return;
+        try {
+            ws.send(JSON.stringify({
+                type: "Create",
+                roomId,
+                sender,
+                content:""
+            }));
+        } catch (e) {
+            console.error(e);
+        }
+    }
+    document.getElementById("createroombtn").addEventListener("click",createroom);
+    async function  leaveeroom ()
+    {
+        const roomId = document.getElementById("currentroomname").textContent;
+        const sender = document.getElementById("nameinput").value.trim();
+        try {
+            ws.send(JSON.stringify({
+                type: "Leave",
+                roomId,
+                sender,
+                content:""
+            }));
+        } catch (e) {
+            console.error(e);
+        }
+    }
+    document.getElementById("LeaveRoombtn").addEventListener("click",leaveeroom);
+    window.addEventListener("DOMContentLoaded",()=>{
     try {
 
         const so = ConnectWebSocket();
         statusedl.textContent = "서버연결 성공"
+
     }
     catch (e)
     {
         statusedl.textContent = "서버연결실패"
     }
 
-} )
+} );
 
 
 </script>
