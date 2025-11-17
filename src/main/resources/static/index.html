@@ -169,6 +169,17 @@ function ConnectWebSocket()
         }
         else if (msg.type =="Join") {
             appendSystem(`[INFO] 방 에${nickname}이 입장하였습니다`);
+            document.getElementById("createroombtn").disabled =true;
+            document.getElementById("loadRoomsBtn").disabled =true;
+            document.getElementById("LeaveRoombtn").disabled =false;
+            document.getElementById("currentroomname").textContent =roomId;
+            document.getElementById("Roomlist").classList.add("disabledBox");
+            document.getElementById("sendbtn").disabled =false;
+            document.getElementById("sendbtn").disabled =false;
+            document.getElementById("chatinput").disabled=false;
+            document.getElementById("nameinput").disabled=true;
+            document.getElementById("newRoomInput").value ="";
+            document.getElementById("newRoomInput").disabled =true;
         }
         else if (msg.type =="CreateAck")
         {
@@ -183,8 +194,10 @@ function ConnectWebSocket()
             document.getElementById("sendbtn").disabled =false;
             document.getElementById("chatinput").disabled=false;
             document.getElementById("nameinput").disabled=true;
+            document.getElementById("newRoomInput").value ="";
+            document.getElementById("newRoomInput").disabled =true;
         }
-        else if (msg.type =="leaveAck")
+        else if (msg.type =="Leave")
         {
             loadroom(); // 목록 새로고침
             document.getElementById("currentroomname").textContent ="현재들어간 방은 없습니다";
@@ -197,6 +210,7 @@ function ConnectWebSocket()
             document.getElementById("chatinput").disabled=true;
             document.getElementById("nameinput").disabled=false;
             document.getElementById("messages").innerHTML="";
+            document.getElementById("newRoomInput").disabled =false;
         }
     }
     async function  createroom ()

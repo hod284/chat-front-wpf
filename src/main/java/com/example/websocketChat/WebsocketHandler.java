@@ -151,20 +151,14 @@ public class WebsocketHandler extends TextWebSocketHandler {
            return;
        }
        ChatDto dto1 =  new  ChatDto(
-               "system",
+               "Leave",
                roomid,
                "server",
                senderid+"님이 방에 나가셨습니다"
        );
        RoomM.leavesession(roomid,session);
        broadcast(roomid ,dto1);
-       ChatDto dto2 =  new  ChatDto(
-               "leaveAck",
-               roomid,
-               "server",
-               ""
-       );
-       String json = objectMap.writeValueAsString(dto2);
+       String json = objectMap.writeValueAsString(dto1);
        session.sendMessage(new TextMessage(json));
    }
     private void SendError(WebSocketSession session, String message) throws IOException
