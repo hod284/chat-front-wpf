@@ -199,17 +199,22 @@ function ConnectWebSocket()
         }
         else if (msg.type =="Leave")
         {
-            document.getElementById("currentroomname").textContent ="현재들어간 방은 없습니다";
-            document.getElementById("createroombtn").disabled =false;
-            document.getElementById("loadRoomsBtn").disabled =false;
-            document.getElementById("LeaveRoombtn").disabled =true;
-            document.getElementById("Roomlist").classList.remove("disabledBox");
-            document.getElementById("sendbtn").disabled =true;
-            document.getElementById("sendbtn").disabled =true;
-            document.getElementById("chatinput").disabled=true;
-            document.getElementById("nameinput").disabled=false;
-            document.getElementById("messages").innerHTML="";
-            document.getElementById("newRoomInput").disabled =false;
+            const  nickname = document.getElementById("nameinput").value.trim();
+            console.log(nickname);
+            console.log(msg);
+            if(msg.sender ==    nickname ) {
+                document.getElementById("currentroomname").textContent = "현재들어간 방은 없습니다";
+                document.getElementById("createroombtn").disabled = false;
+                document.getElementById("loadRoomsBtn").disabled = false;
+                document.getElementById("LeaveRoombtn").disabled = true;
+                document.getElementById("Roomlist").classList.remove("disabledBox");
+                document.getElementById("sendbtn").disabled = true;
+                document.getElementById("sendbtn").disabled = true;
+                document.getElementById("chatinput").disabled = true;
+                document.getElementById("nameinput").disabled = false;
+                document.getElementById("messages").innerHTML = "";
+                document.getElementById("newRoomInput").disabled = false;
+            }
         }
     }
     async function  createroom ()

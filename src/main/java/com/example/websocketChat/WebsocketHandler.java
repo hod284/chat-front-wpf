@@ -163,7 +163,7 @@ public class WebsocketHandler extends TextWebSocketHandler {
        ChatDto dto1 =  new  ChatDto(
                "Leave",
                roomid,
-               "server",
+               senderid,
                senderid+"님이 방에 나가셨습니다"
        );
        RoomM.leavesession(roomid,session);
