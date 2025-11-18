@@ -158,8 +158,8 @@ public class WebsocketHandler extends TextWebSocketHandler {
                senderid,
                senderid+"님이 방에 나가셨습니다"
        );
-       RoomM.leavesession(roomid,session);
        broadcast(roomid ,dto1);
+       RoomM.leavesession(roomid,session);
    }
     private void SendError(WebSocketSession session, String message) throws IOException
     {
