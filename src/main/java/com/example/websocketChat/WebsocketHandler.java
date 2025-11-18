@@ -160,8 +160,6 @@ public class WebsocketHandler extends TextWebSocketHandler {
        );
        RoomM.leavesession(roomid,session);
        broadcast(roomid ,dto1);
-       String json = objectMap.writeValueAsString(dto1);
-       session.sendMessage(new TextMessage(json));
    }
     private void SendError(WebSocketSession session, String message) throws IOException
     {
