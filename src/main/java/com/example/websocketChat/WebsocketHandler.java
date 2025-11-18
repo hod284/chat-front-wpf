@@ -111,7 +111,7 @@ public class WebsocketHandler extends TextWebSocketHandler {
        }
        RoomM.Addroomorjoinroom(roomid,session);
        ChatDto dto1 =  new  ChatDto(
-               "system",
+               "Join",
                roomid,
                "server",
                 senderid+"님이 방에 참가하였습니다"
@@ -119,14 +119,6 @@ public class WebsocketHandler extends TextWebSocketHandler {
        RoomM.Addsession(roomid,senderid,session);
        log.info(dto1.toString());
        broadcast(roomid,dto1);
-       ChatDto dto2 =  new  ChatDto(
-               "Join",
-               roomid,
-               "server",
-               ""
-       );
-       String json = objectMap.writeValueAsString(dto2);
-       session.sendMessage(new TextMessage(json));
    }
    private  void Createhandle (WebSocketSession session,ChatDto dto)  throws IOException
    {
