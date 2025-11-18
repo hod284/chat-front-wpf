@@ -1,6 +1,7 @@
 package com.example.websocketChat;
 
 
+import jakarta.validation.constraints.Null;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.web.socket.WebSocketSession;
@@ -55,15 +56,16 @@ public class RoomManager {
         //id->ConcurrentHashMap.newKeySet() 동시 접근(멀티스레드)에 안전한 Set 하나 만들어서 반환해줌
 
         var Value = Roominfo.get(roomid);
-        if(Roominfo.size()>0)
-        {
-            if(Value.size()==1)
+            if(Value == null||Value.size()==0)
                 RemoveRoom(roomid);
-            else
+            else  if(Roominfo.size()>0)
             {
                 Roominfo.get(roomid).remove(session);
+                Value = Roominfo.get(roomid);
+                if(Value == null||Value.size()==0)
+                RemoveRoom(roomid);
             }
-        }
+
         if(Sessioninfolist.size()>0)
            Sessioninfolist.get(session).removeIf(x->x.getRoomId().equals(roomid));
     }

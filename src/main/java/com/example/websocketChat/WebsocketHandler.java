@@ -119,11 +119,21 @@ public class WebsocketHandler extends TextWebSocketHandler {
        RoomM.Addsession(roomid,senderid,session);
        log.info(dto1.toString());
        broadcast(roomid,dto1);
+       ChatDto dto2 =  new  ChatDto(
+               "Join",
+               roomid,
+               "server",
+               ""
+       );
+       String json = objectMap.writeValueAsString(dto2);
+       session.sendMessage(new TextMessage(json));
    }
    private  void Createhandle (WebSocketSession session,ChatDto dto)  throws IOException
    {
        String roomid = dto.getRoomId();
        String senderid = dto.getSender();
+       if(roomid.isBlank()||roomid==null)
+           return;
        if( RoomM.getRoominfo().contains(roomid))
        {
            log.warn("방있음");
@@ -133,7 +143,7 @@ public class WebsocketHandler extends TextWebSocketHandler {
        RoomM.Addroomorjoinroom(roomid,session);
        RoomM.Addsession(roomid,senderid,session);
        ChatDto dto1 =  new  ChatDto(
-               "CreateAck",
+               "Create",
                roomid,
                "server",
                ""

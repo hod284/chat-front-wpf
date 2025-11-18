@@ -157,6 +157,7 @@ function ConnectWebSocket()
                 btn.addEventListener("click",()=>{
                     joinroom(roommid);
                 });
+                console.log(roommid);
                 document.getElementById("Roomlist").appendChild(btn);
             });
     }
@@ -168,11 +169,11 @@ function ConnectWebSocket()
             appendChat(msg.sender,msg.content);
         }
         else if (msg.type =="Join") {
+            const  nickname = document.getElementById("nameinput").value.trim()
             appendSystem(`[INFO] 방 에${nickname}이 입장하였습니다`);
             document.getElementById("createroombtn").disabled =true;
             document.getElementById("loadRoomsBtn").disabled =true;
             document.getElementById("LeaveRoombtn").disabled =false;
-            document.getElementById("currentroomname").textContent =roomId;
             document.getElementById("Roomlist").classList.add("disabledBox");
             document.getElementById("sendbtn").disabled =false;
             document.getElementById("sendbtn").disabled =false;
@@ -181,9 +182,8 @@ function ConnectWebSocket()
             document.getElementById("newRoomInput").value ="";
             document.getElementById("newRoomInput").disabled =true;
         }
-        else if (msg.type =="CreateAck")
+        else if (msg.type =="Create")
         {
-             loadroom(); // 목록 새로고침
             const roomId = document.getElementById("newRoomInput").value.trim();
             document.getElementById("createroombtn").disabled =true;
             document.getElementById("loadRoomsBtn").disabled =true;
@@ -199,7 +199,6 @@ function ConnectWebSocket()
         }
         else if (msg.type =="Leave")
         {
-            loadroom(); // 목록 새로고침
             document.getElementById("currentroomname").textContent ="현재들어간 방은 없습니다";
             document.getElementById("createroombtn").disabled =false;
             document.getElementById("loadRoomsBtn").disabled =false;
@@ -281,10 +280,10 @@ function ConnectWebSocket()
     }
     async function joinroom(roomid)
     {
-        const  nickname = nameinput.value||"web-user";
+        const  nickname = document.getElementById("nameinput").value.trim()||"web-user";
         const  joinmsg ={
             type :"Join",
-            roomid: roomid,
+            roomId: roomid,
             sender: nickname,
             content: ""
         }
