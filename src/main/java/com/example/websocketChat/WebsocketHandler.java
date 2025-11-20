@@ -21,10 +21,10 @@ public class WebsocketHandler extends TextWebSocketHandler {
 
     private ObjectMapper objectMap;
     private  RoomManager  RoomM;
-  public WebsocketHandler(ObjectMapper objectMapper, RoomManager RoomM) {
-    this.objectMap = objectMapper;
-    this.RoomM = RoomM;
-  }
+    public WebsocketHandler(ObjectMapper objectMapper, RoomManager RoomM) {
+      this.objectMap = objectMapper;
+      this.RoomM = RoomM;
+   }
    @Override// 연결된후
    public void afterConnectionEstablished(WebSocketSession session ) throws Exception
    {
